@@ -163,7 +163,7 @@ def verify_input_files_list(files_list):
         if file.endswith(".bam"):
             check_for_bai(file)
 
-def start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height):
+def start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height, pref=[]):
     '''
     Initialize the batchscript file and write setup information to it
     '''
@@ -175,6 +175,9 @@ def start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genom
     append_string("genome " + genome_version, IGV_batchscript_file)
     # add the snapshot dir
     append_string("snapshotDirectory " + IGV_snapshot_dir, IGV_batchscript_file)
+    # add IGV preferences
+    for p in pref:
+        append_string("preference " + p, IGV_batchscript_file)
     # add all of the input files to load as tracks
     for file in input_files:
         append_string("load " + file, IGV_batchscript_file)
@@ -206,11 +209,12 @@ def write_batchscript_regions(region_file, IGV_batchscript_file, image_height, s
         append_string("snapshot " + snapshot_filename, IGV_batchscript_file)
 
 
-def write_IGV_script(input_files, region_file, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height, suffix = None, nf4_mode = False, group_by_strand=False):
+def write_IGV_script(input_files, region_file, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height,
+                     suffix = None, nf4_mode = False, group_by_strand=False, pref=[]):
     '''
     write out a batchscrpt for IGV
     '''
-    start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height)
+    start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height, pref=pref)
     write_batchscript_regions(region_file, IGV_batchscript_file, image_height, suffix, nf4_mode, group_by_strand=group_by_strand)
     append_string("exit", IGV_batchscript_file)
 
@@ -241,7 +245,7 @@ def main(input_files, region_file = 'regions.bed', genome = 'hg19',
          image_height = '500', outdir = 'IGV_Snapshots',
          igv_jar_bin = "bin/IGV_2.3.81/igv.jar", igv_mem = "4000",
          no_snap = False, suffix = None, nf4_mode = False, onlysnap = False,
-         group_by_strand=False):
+         group_by_strand=False, pref=[]):
     '''
     Main control function for the script
     '''
@@ -284,7 +288,8 @@ def main(input_files, region_file = 'regions.bed', genome = 'hg19',
                      IGV_batchscript_file = batchscript_file,
                      IGV_snapshot_dir = outdir, genome_version = genome,
                      image_height = image_height, suffix = suffix,
-                     nf4_mode = nf4_mode, group_by_strand=group_by_strand)
+                     nf4_mode = nf4_mode, group_by_strand=group_by_strand,
+                     pref=pref)
 
     # make sure the batch script file exists
     file_exists(batchscript_file, kill = True)
@@ -315,6 +320,7 @@ def run():
     parser.add_argument("-suffix", default = None, dest = 'suffix', help="Filename suffix to place before '.png' in the snapshots")
     parser.add_argument("-nf4", default = False, action='store_true', dest = 'nf4_mode', help="'Name field 4' mode; uses the value in the fourth field of the regions file as the filename for each region snapshot")
     parser.add_argument("-onlysnap", default = False, dest = 'onlysnap', help="Path to batchscript file to run in IGV. Performs no error checking or other input evaluation, only runs IGV on the batchscript and exits.")
+    parser.add_argument("-pref", action='append', dest = 'pref', help="Preferences to be passed to IGV, e.g. -pref \"NAME_PANEL_WIDTH 250\"")
     parser.add_argument("-s", "-group_by_strand", default=False,
                         dest="group_by_strand", action='store_true',
                         help="Group reads by forward/reverse strand.")
@@ -333,12 +339,13 @@ def run():
     nf4_mode = args.nf4_mode
     onlysnap = args.onlysnap
     group_by_strand = args.group_by_strand
+    pref = args.pref
 
     main(input_files = input_files, region_file = region_file, genome = genome,
          image_height = image_height, outdir = outdir, igv_jar_bin = igv_jar_bin,
          igv_mem = igv_mem, no_snap = no_snap, suffix = suffix,
          nf4_mode = nf4_mode, onlysnap = onlysnap,
-         group_by_strand=group_by_strand)
+         group_by_strand=group_by_strand, pref=pref)
 
 
 
