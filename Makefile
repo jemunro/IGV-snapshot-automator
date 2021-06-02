@@ -1,11 +1,10 @@
 # download and install IGV
-install: igv.jar
+install: IGV
 
-igv.jar: IGV_2.9.5.zip
+IGV: IGV_2.9.5.zip
 	unzip IGV_2.9.5.zip && \
 	rm -f IGV_2.9.5.zip && \
-	ln -s IGV_2.9.5/lib/igv.jar && \
-	ln -s IGV_2.9.5/igv.sh
+	ln -s IGV_2.9.5 IGV
 
 IGV_2.9.5.zip:
 	wget http://data.broadinstitute.org/igv/projects/downloads/2.9/IGV_2.9.5.zip -O tmp \

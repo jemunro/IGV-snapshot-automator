@@ -27,6 +27,6 @@ ENV PATH="/IGV-snapshot-automator/:${PATH}"
 RUN cd /IGV-snapshot-automator && \
     make install && \
     printf 'new\ngenome hg19\nexit\n' > /genome.bat && \
-    xvfb-run --auto-servernum --server-num=1 igv.sh -b /genome.bat
+    xvfb-run --auto-servernum --server-num=1 /IGV-snapshot-automator/IGV/igv.sh -b /genome.bat
 
 ENTRYPOINT ["make_IGV_snapshots.py"]
