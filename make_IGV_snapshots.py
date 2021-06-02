@@ -163,7 +163,7 @@ def verify_input_files_list(files_list):
         if file.endswith(".bam"):
             check_for_bai(file)
 
-def start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height, pref=[]):
+def start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genome_version, image_height, pref=None):
     '''
     Initialize the batchscript file and write setup information to it
     '''
@@ -176,8 +176,9 @@ def start_batchscript(input_files, IGV_batchscript_file, IGV_snapshot_dir, genom
     # add the snapshot dir
     append_string("snapshotDirectory " + IGV_snapshot_dir, IGV_batchscript_file)
     # add IGV preferences
-    for p in pref:
-        append_string("preference " + p, IGV_batchscript_file)
+    if pref is not None:
+        for p in pref:
+            append_string("preference " + p, IGV_batchscript_file)
     # add all of the input files to load as tracks
     for file in input_files:
         append_string("load " + file, IGV_batchscript_file)
@@ -227,7 +228,7 @@ def run_IGV_script(igv_script, igv_sh, memMB, screen):
     x_serv_port = get_open_X_server()
     print('\nOpen Xvfb port found on:\n{}\n'.format(x_serv_port))
     # build the system command to run IGV
-    igv_command = "xvfb-run --auto-servernum --server-num=1 -s \'-screen 0 {}\' {} -Xmx{}m -b {}".format(screen, igv_sh, memMB, igv_script)
+    igv_command = "xvfb-run --auto-servernum --server-num=1 -s \'-screen 0 {}\' {} -b {}".format(screen, igv_sh, igv_script)
     print('\nIGV command is:\n{}\n'.format(igv_command))
     # get current time; command can take a while to finish
     startTime = datetime.datetime.now()
@@ -320,7 +321,7 @@ def run():
     parser.add_argument("-nf4", default = False, action='store_true', dest = 'nf4_mode', help="'Name field 4' mode; uses the value in the fourth field of the regions file as the filename for each region snapshot")
     parser.add_argument("-onlysnap", default = False, dest = 'onlysnap', help="Path to batchscript file to run in IGV. Performs no error checking or other input evaluation, only runs IGV on the batchscript and exits.")
     parser.add_argument("-pref", action='append', dest = 'pref', help="Preferences to be passed to IGV, e.g. -pref \"NAME_PANEL_WIDTH 250\"")
-    parser.add_argument("-screen", default = '720x100x8', dest = 'screen', help="screen Argument passed to xvfb")
+    parser.add_argument("-screen", default = '720x100x8', dest = 'screen', help="Screen Argument passed to xvfb")
     parser.add_argument("-s", "-group_by_strand", default=False,
                         dest="group_by_strand", action='store_true',
                         help="Group reads by forward/reverse strand.")
