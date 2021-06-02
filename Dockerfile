@@ -5,15 +5,16 @@ LABEL \
   author="Jacob Munro" \
   maintainer="Bahlo Lab"
 
-RUN apt-get update && \
-    apt-get install -y
-    wget \
-    unzip \
-    openjdk-11-jdk \
-    xvfb \
-    xorg \
-    python \
-    make
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        wget \
+        unzip \
+        openjdk-11-jdk \
+        xvfb \
+        xorg \
+        python \
+        make \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # add the source code for the repo to the container
 COPY . /IGV-snapshot-automator
