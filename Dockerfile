@@ -5,8 +5,7 @@ LABEL \
   author="Jacob Munro" \
   maintainer="Bahlo Lab"
 
-RUN add-apt-repository ppa:linuxuprising/java \
-    && apt-get update \
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         wget \
         unzip \
