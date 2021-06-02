@@ -1,11 +1,12 @@
 # Docker container with the dependencies needed to run the IGV snapshot automator
-FROM ubuntu:16.04
+FROM debian:buster-slim
 
 LABEL \
   author="Jacob Munro" \
   maintainer="Bahlo Lab"
 
-RUN apt-get update \
+RUN add-apt-repository ppa:linuxuprising/java \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
         wget \
         unzip \
