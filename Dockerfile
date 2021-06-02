@@ -1,5 +1,5 @@
 # Docker container with the dependencies needed to run the IGV snapshot automator
-FROM debian:buster-slim
+FROM debian:buster-20210511
 
 LABEL \
   author="Jacob Munro" \
@@ -9,6 +9,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         wget \
         unzip \
+        openjdk-11-jdk-headless \
         openjdk-11-jdk \
         xvfb \
         xorg \
